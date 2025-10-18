@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
 import { spacing, typography } from '../../../shared/constants';
@@ -17,14 +18,16 @@ import {
   HabitFormData,
 } from '../components/CreateHabitModal';
 import { HabitCard } from '../components/HabitCard';
-import { ProgressRing } from '../../../shared/components';
+import { ProgressRing, CelebrationModal } from '../../../shared/components';
 
 export const TodayScreen: React.FC = () => {
+  const navigation = useNavigation();
   const { colors } = useTheme();
   const haptic = useHaptic();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
     loadHabits();
@@ -37,8 +40,14 @@ export const TodayScreen: React.FC = () => {
 
   const handleCompleteHabit = async (habitId: string) => {
     await habitRepository.completeHabit(habitId, new Date());
-    setCompletedCount(prev => prev + 1);
+    const newCount = completedCount + 1;
+    setCompletedCount(newCount);
     haptic.success();
+
+    // Show celebration if all habits completed
+    if (newCount === totalHabits && totalHabits > 0) {
+      setTimeout(() => setShowCelebration(true), 500);
+    }
   };
 
   const handleCreateHabit = async (habitData: HabitFormData) => {
@@ -50,6 +59,10 @@ export const TodayScreen: React.FC = () => {
     });
     await loadHabits();
     haptic.success();
+  };
+
+  const handleHabitPress = (habitId: string) => {
+    navigation.navigate('HabitDetail' as never, { habitId } as never);
   };
 
   const today = format(new Date(), 'EEEE, MMM d');
@@ -115,6 +128,7 @@ export const TodayScreen: React.FC = () => {
               key={habit.id}
               habit={habit}
               onComplete={handleCompleteHabit}
+              onPress={handleHabitPress}
             />
           ))
         )}
@@ -136,6 +150,18 @@ export const TodayScreen: React.FC = () => {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSave={handleCreateHabit}
+      />
+
+      {/* Celebration Modal */}
+      <CelebrationModal
+        visible={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        title="Perfect Day!"
+        message={`You completed all ${totalHabits} habits for ${format(
+          new Date(),
+          'EEEE',
+        )}. Keep up the amazing work!`}
+        emoji="🎉"
       />
     </View>
   );

@@ -23,6 +23,7 @@ interface HabitCardProps {
   habit: Habit;
   onComplete: (habitId: string) => void;
   onEdit?: (habitId: string) => void;
+  onPress?: (habitId: string) => void;
   completed?: boolean;
 }
 
@@ -30,6 +31,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
   habit,
   onComplete,
   onEdit,
+  onPress,
   completed = false,
 }) => {
   const { colors } = useTheme();
@@ -43,6 +45,13 @@ export const HabitCard: React.FC<HabitCardProps> = ({
     setShowConfetti(true);
     onComplete(habit.id);
     setTimeout(() => setShowConfetti(false), 2500);
+  };
+
+  const handlePress = () => {
+    if (onPress) {
+      haptic.light();
+      onPress(habit.id);
+    }
   };
 
   const gesture = Gesture.Pan()
@@ -121,10 +130,16 @@ export const HabitCard: React.FC<HabitCardProps> = ({
     };
   });
 
+  const tapGesture = Gesture.Tap().onEnd(() => {
+    runOnJS(handlePress)();
+  });
+
+  const combinedGesture = Gesture.Race(gesture, tapGesture);
+
   return (
     <View style={styles.container}>
       {showConfetti && <ConfettiAnimation />}
-      <GestureDetector gesture={gesture}>
+      <GestureDetector gesture={combinedGesture}>
         <Animated.View
           style={[
             styles.card,

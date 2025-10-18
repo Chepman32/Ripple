@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -22,6 +23,7 @@ import { Habit } from '../../../shared/types';
 
 export const HabitsListScreen: React.FC = () => {
   const { colors } = useTheme();
+  const navigation = useNavigation();
   const [habits, setHabits] = useState<Habit[]>([]);
 
   useEffect(() => {
@@ -56,11 +58,16 @@ export const HabitsListScreen: React.FC = () => {
     await loadHabits();
   };
 
+  const handleHabitPress = (habitId: string) => {
+    navigation.navigate('HabitDetail' as never, { habitId } as never);
+  };
+
   const renderHabitItem = ({ item }: { item: Habit }) => (
     <HabitListItem
       habit={item}
       onDelete={handleDelete}
       onArchive={handleArchive}
+      onPress={handleHabitPress}
     />
   );
 
@@ -101,12 +108,14 @@ interface HabitListItemProps {
   habit: Habit;
   onDelete: (id: string, name: string) => void;
   onArchive: (id: string) => void;
+  onPress: (id: string) => void;
 }
 
 const HabitListItem: React.FC<HabitListItemProps> = ({
   habit,
   onDelete,
   onArchive,
+  onPress,
 }) => {
   const { colors } = useTheme();
   const haptic = useHaptic();
@@ -179,25 +188,34 @@ const HabitListItem: React.FC<HabitListItemProps> = ({
             cardStyle,
           ]}
         >
-          <View
-            style={[styles.habitIcon, { backgroundColor: habit.color + '26' }]}
+          <TouchableOpacity
+            style={styles.habitItemContent}
+            onPress={() => onPress(habit.id)}
+            activeOpacity={0.7}
           >
-            <Text style={styles.habitIconText}>{habit.icon}</Text>
-          </View>
-          <View style={styles.habitInfo}>
-            <Text style={[styles.habitName, { color: colors.textPrimary }]}>
-              {habit.name}
-            </Text>
-            <Text
-              style={[styles.habitFrequency, { color: colors.textSecondary }]}
+            <View
+              style={[
+                styles.habitIcon,
+                { backgroundColor: habit.color + '26' },
+              ]}
             >
-              {habit.frequency}
-              {habit.targetValue && ` • ${habit.targetValue} ${habit.unit}`}
+              <Text style={styles.habitIconText}>{habit.icon}</Text>
+            </View>
+            <View style={styles.habitInfo}>
+              <Text style={[styles.habitName, { color: colors.textPrimary }]}>
+                {habit.name}
+              </Text>
+              <Text
+                style={[styles.habitFrequency, { color: colors.textSecondary }]}
+              >
+                {habit.frequency}
+                {habit.targetValue && ` • ${habit.targetValue} ${habit.unit}`}
+              </Text>
+            </View>
+            <Text style={[styles.chevron, { color: colors.textTertiary }]}>
+              ›
             </Text>
-          </View>
-          <Text style={[styles.chevron, { color: colors.textTertiary }]}>
-            ›
-          </Text>
+          </TouchableOpacity>
         </Animated.View>
       </GestureDetector>
     </View>
@@ -246,10 +264,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   habitItem: {
+    borderBottomWidth: 1,
+  },
+  habitItemContent: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.lg,
-    borderBottomWidth: 1,
   },
   habitIcon: {
     width: 40,
