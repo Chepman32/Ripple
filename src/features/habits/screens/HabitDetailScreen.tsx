@@ -22,6 +22,7 @@ import { LineChart } from '../../statistics/components/LineChart';
 import { CalendarHeatmap } from '../../statistics/components/CalendarHeatmap';
 import { Card, Button } from '../../../shared/components';
 import { format, subDays } from 'date-fns';
+import { EditHabitModal } from '../components/EditHabitModal';
 
 export const HabitDetailScreen: React.FC = () => {
   const route = useRoute();
@@ -31,6 +32,7 @@ export const HabitDetailScreen: React.FC = () => {
   const haptic = useHaptic();
   const [habit, setHabit] = useState<Habit | null>(null);
   const [completions, setCompletions] = useState<HabitCompletion[]>([]);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const [stats, setStats] = useState({
     currentStreak: 0,
     longestStreak: 0,
@@ -85,6 +87,17 @@ export const HabitDetailScreen: React.FC = () => {
     );
   };
 
+  const handleEdit = () => {
+    haptic.light();
+    setEditModalVisible(true);
+  };
+
+  const handleSaveEdit = async (id: string, updates: Partial<Habit>) => {
+    await habitRepository.updateHabit(id, updates);
+    await loadHabitData();
+    haptic.success();
+  };
+
   if (!habit) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -109,12 +122,17 @@ export const HabitDetailScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: habit.color }]}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
+        <View style={styles.headerTop}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backIcon}>←</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+            <Text style={styles.editIcon}>✏️</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.headerContent}>
           <Text style={styles.habitIcon}>{habit.icon}</Text>
           <Text style={styles.habitName}>{habit.name}</Text>
@@ -219,6 +237,13 @@ export const HabitDetailScreen: React.FC = () => {
           </Button>
         </View>
       </ScrollView>
+
+      <EditHabitModal
+        visible={editModalVisible}
+        habit={habit}
+        onClose={() => setEditModalVisible(false)}
+        onSave={handleSaveEdit}
+      />
     </View>
   );
 };
@@ -239,15 +264,29 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
   backButton: {
     width: 40,
     height: 40,
     justifyContent: 'center',
-    marginBottom: spacing.lg,
   },
   backIcon: {
     fontSize: 32,
     color: '#FFFFFF',
+  },
+  editButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  editIcon: {
+    fontSize: 24,
   },
   headerContent: {
     alignItems: 'center',

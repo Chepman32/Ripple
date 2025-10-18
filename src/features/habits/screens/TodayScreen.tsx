@@ -18,6 +18,7 @@ import {
   HabitFormData,
 } from '../components/CreateHabitModal';
 import { HabitCard } from '../components/HabitCard';
+import { CompleteHabitModal } from '../components/CompleteHabitModal';
 import { ProgressRing, CelebrationModal } from '../../../shared/components';
 
 export const TodayScreen: React.FC = () => {
@@ -28,6 +29,8 @@ export const TodayScreen: React.FC = () => {
   const [completedCount, setCompletedCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [completeModalVisible, setCompleteModalVisible] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
 
   useEffect(() => {
     loadHabits();
@@ -38,8 +41,25 @@ export const TodayScreen: React.FC = () => {
     setHabits(allHabits);
   };
 
-  const handleCompleteHabit = async (habitId: string) => {
-    await habitRepository.completeHabit(habitId, new Date());
+  const handleCompleteHabit = (habitId: string) => {
+    const habit = habits.find(h => h.id === habitId);
+    if (!habit) return;
+
+    // If habit has target value or we want to add notes/mood, show modal
+    if (habit.targetValue) {
+      setSelectedHabit(habit);
+      setCompleteModalVisible(true);
+    } else {
+      // Quick complete without modal
+      completeHabitWithData(habitId, {});
+    }
+  };
+
+  const completeHabitWithData = async (
+    habitId: string,
+    data: { value?: number; note?: string; mood?: 'great' | 'good' | 'okay' | 'bad' },
+  ) => {
+    await habitRepository.completeHabit(habitId, new Date(), data);
     const newCount = completedCount + 1;
     setCompletedCount(newCount);
     haptic.success();
@@ -48,6 +68,8 @@ export const TodayScreen: React.FC = () => {
     if (newCount === totalHabits && totalHabits > 0) {
       setTimeout(() => setShowCelebration(true), 500);
     }
+
+    await loadHabits();
   };
 
   const handleCreateHabit = async (habitData: HabitFormData) => {
@@ -163,6 +185,28 @@ export const TodayScreen: React.FC = () => {
         )}. Keep up the amazing work!`}
         emoji="🎉"
       />
+
+      {/* Complete Habit Modal */}
+      {selectedHabit && (
+        <CompleteHabitModal
+          visible={completeModalVisible}
+          habitName={selectedHabit.name}
+          habitColor={selectedHabit.color}
+          habitIcon={selectedHabit.icon}
+          hasTargetValue={!!selectedHabit.targetValue}
+          targetValue={selectedHabit.targetValue}
+          unit={selectedHabit.unit}
+          onClose={() => {
+            setCompleteModalVisible(false);
+            setSelectedHabit(null);
+          }}
+          onComplete={data => {
+            completeHabitWithData(selectedHabit.id, data);
+            setCompleteModalVisible(false);
+            setSelectedHabit(null);
+          }}
+        />
+      )}
     </View>
   );
 };

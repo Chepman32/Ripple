@@ -82,8 +82,11 @@ export class HabitRepository {
   async completeHabit(
     habitId: string,
     date: Date,
-    value?: number,
-    note?: string,
+    data?: {
+      value?: number;
+      note?: string;
+      mood?: 'great' | 'good' | 'okay' | 'bad';
+    },
   ): Promise<HabitCompletion> {
     const realm = await getRealmInstance();
     const id = this.generateId();
@@ -95,8 +98,9 @@ export class HabitRepository {
         id,
         habitId,
         completedAt: date,
-        value,
-        note,
+        value: data?.value,
+        note: data?.note,
+        mood: data?.mood,
         skipped: false,
         createdAt: now,
       });

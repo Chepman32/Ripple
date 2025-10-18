@@ -6,6 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  TextInput,
+  ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -13,26 +15,56 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
+  withSpring,
   runOnJS,
 } from 'react-native-reanimated';
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
 import { spacing, typography } from '../../../shared/constants';
-import { habitRepository } from '../../../database/repositories/HabitRepository';
-import { Habit } from '../../../shared/types';
+import { habitRepository, categoryRepository } from '../../../database/repositories';
+import { Habit, Category } from '../../../shared/types';
 
 export const HabitsListScreen: React.FC = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
+  const haptic = useHaptic();
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [filteredHabits, setFilteredHabits] = useState<Habit[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
-    loadHabits();
+    loadData();
   }, []);
 
-  const loadHabits = async () => {
+  useEffect(() => {
+    filterHabits();
+  }, [searchQuery, selectedCategory, habits]);
+
+  const loadData = async () => {
     const allHabits = await habitRepository.getAllHabits();
+    const allCategories = await categoryRepository.getAllCategories();
     setHabits(allHabits);
+    setCategories(allCategories);
+  };
+
+  const filterHabits = () => {
+    let filtered = [...habits];
+
+    // Filter by search query
+    if (searchQuery) {
+      filtered = filtered.filter(habit =>
+        habit.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter(habit => habit.categoryId === selectedCategory);
+    }
+
+    setFilteredHabits(filtered);
   };
 
   const handleDelete = (habitId: string, habitName: string) => {
@@ -46,7 +78,7 @@ export const HabitsListScreen: React.FC = () => {
           style: 'destructive',
           onPress: async () => {
             await habitRepository.deleteHabit(habitId);
-            await loadHabits();
+            await loadData();
           },
         },
       ],
@@ -55,7 +87,12 @@ export const HabitsListScreen: React.FC = () => {
 
   const handleArchive = async (habitId: string) => {
     await habitRepository.archiveHabit(habitId);
-    await loadHabits();
+    await loadData();
+  };
+
+  const handleCategorySelect = (categoryId: string | null) => {
+    haptic.light();
+    setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
   };
 
   const handleHabitPress = (habitId: string) => {
@@ -78,29 +115,149 @@ export const HabitsListScreen: React.FC = () => {
           All Habits
         </Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          {habits.length} {habits.length === 1 ? 'habit' : 'habits'}
+          {filteredHabits.length} of {habits.length}{' '}
+          {habits.length === 1 ? 'habit' : 'habits'}
         </Text>
       </View>
 
+      {/* Search Bar */}
+      <View style={[styles.searchContainer, { backgroundColor: colors.background }]}>
+        <View
+          style={[
+            styles.searchBar,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <Text style={[styles.searchIcon, { color: colors.textSecondary }]}>
+            🔍
+          </Text>
+          <TextInput
+            style={[styles.searchInput, { color: colors.textPrimary }]}
+            placeholder="Search habits..."
+            placeholderTextColor={colors.textSecondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setSearchQuery('')}
+              style={styles.clearButton}
+            >
+              <Text style={[styles.clearText, { color: colors.textSecondary }]}>
+                ✕
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
+      {/* Category Filter */}
+      {categories.length > 0 && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoryScroll}
+          contentContainerStyle={styles.categoryScrollContent}
+        >
+          <CategoryChip
+            label="All"
+            selected={selectedCategory === null}
+            onPress={() => handleCategorySelect(null)}
+          />
+          {categories.map(category => (
+            <CategoryChip
+              key={category.id}
+              label={category.name}
+              color={category.color}
+              icon={category.icon}
+              selected={selectedCategory === category.id}
+              onPress={() => handleCategorySelect(category.id)}
+            />
+          ))}
+        </ScrollView>
+      )}
+
       <FlatList
-        data={habits}
+        data={filteredHabits}
         renderItem={renderHabitItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
-              No Habits Yet
+              {searchQuery || selectedCategory
+                ? 'No Matching Habits'
+                : 'No Habits Yet'}
             </Text>
             <Text
               style={[styles.emptySubtitle, { color: colors.textSecondary }]}
             >
-              Create your first habit to get started
+              {searchQuery || selectedCategory
+                ? 'Try a different search or filter'
+                : 'Create your first habit to get started'}
             </Text>
           </View>
         }
       />
     </View>
+  );
+};
+
+interface CategoryChipProps {
+  label: string;
+  color?: string;
+  icon?: string;
+  selected: boolean;
+  onPress: () => void;
+}
+
+const CategoryChip: React.FC<CategoryChipProps> = ({
+  label,
+  color,
+  icon,
+  selected,
+  onPress,
+}) => {
+  const { colors } = useTheme();
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePress = () => {
+    scale.value = withSpring(0.95, { damping: 15 }, () => {
+      scale.value = withSpring(1);
+    });
+    runOnJS(onPress)();
+  };
+
+  return (
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+      <Animated.View
+        style={[
+          styles.categoryChip,
+          {
+            backgroundColor: selected ? (color || colors.primary) : colors.surface,
+            borderColor: selected ? (color || colors.primary) : colors.border,
+          },
+          animatedStyle,
+        ]}
+      >
+        {icon && <Text style={styles.chipIcon}>{icon}</Text>}
+        <Text
+          style={[
+            styles.chipLabel,
+            { color: selected ? '#FFFFFF' : colors.textPrimary },
+          ]}
+        >
+          {label}
+        </Text>
+      </Animated.View>
+    </TouchableOpacity>
   );
 };
 
@@ -229,7 +386,7 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 60,
     paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xl,
+    paddingBottom: spacing.md,
   },
   title: {
     ...typography.h1,
@@ -237,6 +394,57 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...typography.body,
+  },
+  searchContainer: {
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.md,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 50,
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: spacing.md,
+  },
+  searchIcon: {
+    fontSize: 18,
+    marginRight: spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    ...typography.body,
+    height: '100%',
+  },
+  clearButton: {
+    padding: spacing.xs,
+  },
+  clearText: {
+    fontSize: 18,
+  },
+  categoryScroll: {
+    maxHeight: 50,
+    marginBottom: spacing.md,
+  },
+  categoryScrollContent: {
+    paddingHorizontal: spacing.xl,
+    gap: spacing.sm,
+  },
+  categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: 18,
+    borderWidth: 2,
+    gap: spacing.xs,
+  },
+  chipIcon: {
+    fontSize: 16,
+  },
+  chipLabel: {
+    ...typography.body,
+    fontWeight: '600',
   },
   listContent: {
     flexGrow: 1,

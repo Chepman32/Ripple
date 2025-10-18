@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import {
   VictoryLine,
   VictoryChart,
   VictoryAxis,
-  VictoryTheme,
 } from 'victory-native';
 import { useTheme } from '../../../shared/hooks/useTheme';
 
@@ -18,12 +17,23 @@ interface LineChartProps {
 export const LineChart: React.FC<LineChartProps> = ({ data, color }) => {
   const { colors } = useTheme();
 
+  // Handle empty data
+  if (!data || data.length === 0) {
+    return (
+      <View style={[styles.container, styles.emptyState]}>
+        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+          No data available
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <VictoryChart
-        width={SCREEN_WIDTH - 40}
+        width={SCREEN_WIDTH - 80}
         height={200}
-        theme={VictoryTheme.material}
+        padding={{ top: 20, bottom: 40, left: 40, right: 20 }}
       >
         <VictoryAxis
           style={{
@@ -57,5 +67,12 @@ export const LineChart: React.FC<LineChartProps> = ({ data, color }) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+  },
+  emptyState: {
+    height: 200,
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 14,
   },
 });

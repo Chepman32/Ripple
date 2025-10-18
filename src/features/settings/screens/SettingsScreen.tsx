@@ -17,12 +17,14 @@ import {
   habitRepository,
 } from '../../../database/repositories';
 import { AppSettings } from '../../../shared/types';
+import { ExportDataModal } from '../components/ExportDataModal';
 
 export const SettingsScreen: React.FC = () => {
   const { colors } = useTheme();
   const haptic = useHaptic();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [habitCount, setHabitCount] = useState(0);
+  const [exportModalVisible, setExportModalVisible] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -45,25 +47,9 @@ export const SettingsScreen: React.FC = () => {
     await loadSettings();
   };
 
-  const handleExportData = async () => {
+  const handleExportData = () => {
     haptic.light();
-    try {
-      const habits = await habitRepository.getAllHabits();
-      const data = {
-        habits,
-        exportDate: new Date().toISOString(),
-        version: '1.0',
-      };
-
-      const jsonString = JSON.stringify(data, null, 2);
-
-      await Share.share({
-        message: jsonString,
-        title: 'Ripple Habits Export',
-      });
-    } catch (error) {
-      Alert.alert('Error', 'Failed to export data');
-    }
+    setExportModalVisible(true);
   };
 
   const handleClearData = () => {
@@ -314,6 +300,11 @@ export const SettingsScreen: React.FC = () => {
           </Text>
         </View>
       </ScrollView>
+
+      <ExportDataModal
+        visible={exportModalVisible}
+        onClose={() => setExportModalVisible(false)}
+      />
     </View>
   );
 };
