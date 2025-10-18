@@ -5,6 +5,7 @@ export class CategoryModel extends Realm.Object<CategoryModel> {
   name!: string;
   color!: string;
   icon!: string;
+  iconType?: string;
   order!: number;
   isCustom!: boolean;
   createdAt!: Date;
@@ -18,6 +19,7 @@ export class CategoryModel extends Realm.Object<CategoryModel> {
       name: 'string',
       color: 'string',
       icon: 'string',
+      iconType: 'string?',
       order: { type: 'int', default: 0 },
       isCustom: { type: 'bool', default: false },
       createdAt: 'date',

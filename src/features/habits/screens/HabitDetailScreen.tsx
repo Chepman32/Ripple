@@ -23,6 +23,7 @@ import { CalendarHeatmap } from '../../statistics/components/CalendarHeatmap';
 import { Card, Button } from '../../../shared/components';
 import { format, subDays } from 'date-fns';
 import { EditHabitModal } from '../components/EditHabitModal';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 export const HabitDetailScreen: React.FC = () => {
   const route = useRoute();
@@ -130,7 +131,7 @@ export const HabitDetailScreen: React.FC = () => {
             <Text style={styles.backIcon}>←</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
-            <Text style={styles.editIcon}>✏️</Text>
+            <FeatherIcon name="edit-2" size={20} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.headerContent}>
@@ -284,9 +285,6 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'flex-end',
-  },
-  editIcon: {
-    fontSize: 24,
   },
   headerContent: {
     alignItems: 'center',

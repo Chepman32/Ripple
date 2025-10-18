@@ -7,3 +7,4 @@ export * from './Input';
 export * from './Toggle';
 export * from './EmptyState';
 export * from './CelebrationModal';
+export * from './HabitIcon';

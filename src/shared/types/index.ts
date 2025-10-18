@@ -17,6 +17,7 @@ export interface Habit {
   description?: string;
   color: string;
   icon: string;
+  iconType?: string;
   categoryId?: string;
   frequency: FrequencyType;
   customFrequency?: CustomFrequency;
@@ -48,6 +49,7 @@ export interface Category {
   name: string;
   color: string;
   icon: string;
+  iconType?: string;
   order: number;
   isCustom: boolean;
   createdAt: Date;

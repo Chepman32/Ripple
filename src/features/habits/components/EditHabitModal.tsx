@@ -18,8 +18,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
-import { Button } from '../../../shared/components';
-import { spacing, typography } from '../../../shared/constants';
+import { Button, HabitIcon } from '../../../shared/components';
+import { spacing, typography, HABIT_ICONS } from '../../../shared/constants';
 import { FrequencyType, Habit } from '../../../shared/types';
 
 interface EditHabitModalProps {
@@ -40,24 +40,7 @@ const PRESET_COLORS = [
   '#14B8A6',
 ];
 
-const PRESET_ICONS = [
-  '💪',
-  '📚',
-  '🏃',
-  '🧘',
-  '💧',
-  '🎯',
-  '✍️',
-  '🎨',
-  '🎵',
-  '🍎',
-  '😴',
-  '🧠',
-  '💼',
-  '🏠',
-  '🌱',
-  '⭐',
-];
+// Icons now use HABIT_ICONS from constants
 
 export const EditHabitModal: React.FC<EditHabitModalProps> = ({
   visible,
@@ -72,7 +55,7 @@ export const EditHabitModal: React.FC<EditHabitModalProps> = ({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
-  const [selectedIcon, setSelectedIcon] = useState(PRESET_ICONS[0]);
+  const [selectedIconIndex, setSelectedIconIndex] = useState(0);
   const [frequency, setFrequency] = useState<FrequencyType>(FrequencyType.DAILY);
   const [targetValue, setTargetValue] = useState('');
   const [unit, setUnit] = useState('');
@@ -83,7 +66,11 @@ export const EditHabitModal: React.FC<EditHabitModalProps> = ({
       setName(habit.name);
       setDescription(habit.description || '');
       setSelectedColor(habit.color);
-      setSelectedIcon(habit.icon);
+      // Find the index of the current icon in HABIT_ICONS
+      const iconIndex = HABIT_ICONS.findIndex(
+        icon => icon.name === habit.icon && icon.type === habit.iconType
+      );
+      setSelectedIconIndex(iconIndex >= 0 ? iconIndex : 0);
       setFrequency(habit.frequency);
       setTargetValue(habit.targetValue?.toString() || '');
       setUnit(habit.unit || '');
@@ -109,11 +96,13 @@ export const EditHabitModal: React.FC<EditHabitModalProps> = ({
       return;
     }
 
+    const selectedIcon = HABIT_ICONS[selectedIconIndex];
     const updates: Partial<Habit> = {
       name: name.trim(),
       description: description.trim() || undefined,
       color: selectedColor,
-      icon: selectedIcon,
+      icon: selectedIcon.name,
+      iconType: selectedIcon.type,
       frequency,
       targetValue: targetValue ? parseInt(targetValue) : undefined,
       unit: unit.trim() || undefined,
@@ -244,26 +233,31 @@ export const EditHabitModal: React.FC<EditHabitModalProps> = ({
                 Icon
               </Text>
               <View style={styles.iconGrid}>
-                {PRESET_ICONS.map(icon => (
+                {HABIT_ICONS.map((iconConfig, index) => (
                   <TouchableOpacity
-                    key={icon}
+                    key={`${iconConfig.name}-${iconConfig.type}`}
                     style={[
                       styles.iconButton,
                       {
                         backgroundColor:
-                          selectedIcon === icon
+                          selectedIconIndex === index
                             ? selectedColor + '26'
                             : colors.background,
                         borderColor:
-                          selectedIcon === icon ? selectedColor : colors.border,
+                          selectedIconIndex === index ? selectedColor : colors.border,
                       },
                     ]}
                     onPress={() => {
                       haptic.selection();
-                      setSelectedIcon(icon);
+                      setSelectedIconIndex(index);
                     }}
                   >
-                    <Text style={styles.iconText}>{icon}</Text>
+                    <HabitIcon
+                      iconName={iconConfig.name}
+                      iconType={iconConfig.type}
+                      size={24}
+                      color={selectedIconIndex === index ? selectedColor : colors.textSecondary}
+                    />
                   </TouchableOpacity>
                 ))}
               </View>
@@ -517,9 +511,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  iconText: {
-    fontSize: 24,
   },
   colorGrid: {
     flexDirection: 'row',

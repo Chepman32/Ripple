@@ -14,7 +14,7 @@ import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
 import { spacing, typography, shadows } from '../../../shared/constants';
 import { Habit } from '../../../shared/types';
-import { ConfettiAnimation } from '../../../shared/components/ConfettiAnimation';
+import { ConfettiAnimation, HabitIcon } from '../../../shared/components';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.4;
@@ -164,7 +164,12 @@ export const HabitCard: React.FC<HabitCardProps> = ({
               { backgroundColor: habit.color + '26' },
             ]}
           >
-            <Text style={styles.icon}>{habit.icon}</Text>
+            <HabitIcon
+              iconName={habit.icon}
+              iconType={habit.iconType}
+              size={24}
+              color={habit.color}
+            />
           </View>
 
           <View style={styles.content}>

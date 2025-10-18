@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -148,11 +148,11 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
 
       {/* Logo */}
       <Animated.View style={[styles.logoContainer, logoStyle]}>
-        <View style={styles.logo}>
-          <View style={[styles.circle, styles.circle1]} />
-          <View style={[styles.circle, styles.circle2]} />
-          <View style={[styles.circle, styles.circle3]} />
-        </View>
+        <Image
+          source={{ uri: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop' }}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
       </Animated.View>
 
       {/* Text */}
@@ -173,29 +173,11 @@ const styles = StyleSheet.create({
   logoContainer: {
     marginBottom: 40,
   },
-  logo: {
+  logoImage: {
     width: 120,
     height: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circle: {
-    position: 'absolute',
-    borderRadius: 999,
-    borderWidth: 3,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-  },
-  circle1: {
-    width: 40,
-    height: 40,
-  },
-  circle2: {
-    width: 70,
-    height: 70,
-  },
-  circle3: {
-    width: 100,
-    height: 100,
+    borderRadius: 60,
+    opacity: 0.9,
   },
   ripple: {
     position: 'absolute',

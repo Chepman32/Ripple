@@ -20,6 +20,7 @@ import { useHaptic } from '../../hooks/useHaptic';
 import { Button } from '../Button';
 import { ConfettiAnimation } from '../ConfettiAnimation';
 import { spacing, typography } from '../../constants';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -28,7 +29,7 @@ interface CelebrationModalProps {
   onClose: () => void;
   title: string;
   message: string;
-  emoji?: string;
+  iconName?: string;
   showConfetti?: boolean;
 }
 
@@ -37,7 +38,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
   onClose,
   title,
   message,
-  emoji = '🎉',
+  iconName = 'trophy',
   showConfetti = true,
 }) => {
   const { colors } = useTheme();
@@ -45,7 +46,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
 
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
-  const emojiScale = useSharedValue(0);
+  const iconScale = useSharedValue(0);
 
   useEffect(() => {
     if (visible) {
@@ -57,7 +58,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
         stiffness: 150,
       });
 
-      emojiScale.value = withDelay(
+      iconScale.value = withDelay(
         200,
         withSequence(
           withSpring(1.2, { damping: 10 }),
@@ -67,7 +68,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
     } else {
       opacity.value = withTiming(0, { duration: 200 });
       scale.value = withTiming(0, { duration: 200 });
-      emojiScale.value = 0;
+      iconScale.value = 0;
     }
   }, [visible]);
 
@@ -79,8 +80,8 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
     transform: [{ scale: scale.value }],
   }));
 
-  const emojiStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: emojiScale.value }],
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: iconScale.value }],
   }));
 
   return (
@@ -114,9 +115,9 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
             modalStyle,
           ]}
         >
-          <Animated.Text style={[styles.emoji, emojiStyle]}>
-            {emoji}
-          </Animated.Text>
+          <Animated.View style={[styles.iconContainer, iconStyle]}>
+            <Icon name={iconName} size={80} color={colors.primary} />
+          </Animated.View>
 
           <Text style={[styles.title, { color: colors.textPrimary }]}>
             {title}
@@ -155,8 +156,7 @@ const styles = StyleSheet.create({
     padding: spacing['3xl'],
     alignItems: 'center',
   },
-  emoji: {
-    fontSize: 80,
+  iconContainer: {
     marginBottom: spacing.xl,
   },
   title: {

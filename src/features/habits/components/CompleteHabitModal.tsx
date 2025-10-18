@@ -14,8 +14,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
-import { Button } from '../../../shared/components';
+import { Button, HabitIcon } from '../../../shared/components';
 import { spacing, typography } from '../../../shared/constants';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 interface CompleteHabitModalProps {
   visible: boolean;
@@ -35,11 +36,16 @@ interface CompleteHabitModalProps {
 
 type Mood = 'great' | 'good' | 'okay' | 'bad';
 
-const MOOD_OPTIONS: Array<{ value: Mood; emoji: string; label: string; color: string }> = [
-  { value: 'great', emoji: '😊', label: 'Great', color: '#10B981' },
-  { value: 'good', emoji: '🙂', label: 'Good', color: '#06B6D4' },
-  { value: 'okay', emoji: '😐', label: 'Okay', color: '#F59E0B' },
-  { value: 'bad', emoji: '😞', label: 'Bad', color: '#EF4444' },
+const MOOD_OPTIONS: Array<{
+  value: Mood;
+  iconName: string;
+  label: string;
+  color: string;
+}> = [
+  { value: 'great', iconName: 'happy', label: 'Great', color: '#10B981' },
+  { value: 'good', iconName: 'happy-outline', label: 'Good', color: '#06B6D4' },
+  { value: 'okay', iconName: 'remove-circle-outline', label: 'Okay', color: '#F59E0B' },
+  { value: 'bad', iconName: 'sad-outline', label: 'Bad', color: '#EF4444' },
 ];
 
 export const CompleteHabitModal: React.FC<CompleteHabitModalProps> = ({
@@ -240,7 +246,11 @@ export const CompleteHabitModal: React.FC<CompleteHabitModalProps> = ({
                       setSelectedMood(mood.value);
                     }}
                   >
-                    <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+                    <Icon
+                      name={mood.iconName}
+                      size={28}
+                      color={selectedMood === mood.value ? mood.color : colors.textSecondary}
+                    />
                     <Text
                       style={[
                         styles.moodLabel,
@@ -409,9 +419,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     gap: spacing.xs,
-  },
-  moodEmoji: {
-    fontSize: 24,
   },
   moodLabel: {
     ...typography.caption,

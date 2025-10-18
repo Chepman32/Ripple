@@ -1,11 +1,11 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TodayScreen } from '../../features/habits/screens/TodayScreen';
 import { StatisticsScreen } from '../../features/statistics/screens/StatisticsScreen';
 import { HabitsListScreen } from '../../features/habits/screens/HabitsListScreen';
 import { SettingsScreen } from '../../features/settings/screens/SettingsScreen';
 import { useTheme } from '../../shared/hooks/useTheme';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,40 +35,30 @@ export const TabNavigator: React.FC = () => {
         name="Today"
         component={TodayScreen}
         options={{
-          tabBarIcon: ({ color }) => <TabIcon icon="🏠" color={color} />,
+          tabBarIcon: ({ color }) => <Icon name="home" size={24} color={color} />,
         }}
       />
       <Tab.Screen
         name="Statistics"
         component={StatisticsScreen}
         options={{
-          tabBarIcon: ({ color }) => <TabIcon icon="📊" color={color} />,
+          tabBarIcon: ({ color }) => <Icon name="stats-chart" size={24} color={color} />,
         }}
       />
       <Tab.Screen
         name="Habits"
         component={HabitsListScreen}
         options={{
-          tabBarIcon: ({ color }) => <TabIcon icon="📋" color={color} />,
+          tabBarIcon: ({ color }) => <Icon name="list" size={24} color={color} />,
         }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarIcon: ({ color }) => <TabIcon icon="⚙️" color={color} />,
+          tabBarIcon: ({ color }) => <Icon name="settings" size={24} color={color} />,
         }}
       />
     </Tab.Navigator>
   );
 };
-
-const TabIcon: React.FC<{ icon: string; color: string }> = ({ icon }) => {
-  return <Text style={styles.icon}>{icon}</Text>;
-};
-
-const styles = StyleSheet.create({
-  icon: {
-    fontSize: 24,
-  },
-});

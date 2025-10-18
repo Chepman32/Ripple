@@ -6,6 +6,7 @@ export class HabitModel extends Realm.Object<HabitModel> {
   description?: string;
   color!: string;
   icon!: string;
+  iconType?: string;
   categoryId?: string;
   frequency!: string;
   customFrequency?: string;
@@ -29,6 +30,7 @@ export class HabitModel extends Realm.Object<HabitModel> {
       description: 'string?',
       color: 'string',
       icon: 'string',
+      iconType: 'string?',
       categoryId: 'string?',
       frequency: 'string',
       customFrequency: 'string?',
