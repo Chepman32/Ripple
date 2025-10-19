@@ -15,9 +15,18 @@ export const getRealmInstance = async (): Promise<Realm> => {
 
   realmInstance = await Realm.open({
     schema: [HabitModel, HabitCompletionModel, CategoryModel, AppSettingsModel],
-    schemaVersion: 1,
+    schemaVersion: 2,
     migration: (oldRealm, newRealm) => {
       // Handle migrations here when schema changes
+      if (oldRealm.schemaVersion < 2) {
+        // Migration for adding categoryMigrationDone field to AppSettings
+        const oldSettings = oldRealm.objects('AppSettings');
+        const newSettings = newRealm.objects('AppSettings');
+
+        for (let i = 0; i < oldSettings.length; i++) {
+          newSettings[i].categoryMigrationDone = false;
+        }
+      }
     },
   });
 

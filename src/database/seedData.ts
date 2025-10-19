@@ -1,92 +1,104 @@
 import { habitRepository } from './repositories/HabitRepository';
+import { categoryRepository } from './repositories/CategoryRepository';
 import { FrequencyType } from '../shared/types';
 
 /**
  * Seeds the database with sample habits for development/testing
  */
 export const seedSampleHabits = async () => {
-  const sampleHabits = [
-    {
-      name: 'Morning Meditation',
-      description: 'Start the day with 10 minutes of mindfulness',
-      color: '#10B981',
-      icon: 'flower',
-      iconType: 'Ionicons',
-      frequency: FrequencyType.DAILY,
-      targetValue: 10,
-      unit: 'minutes',
-      reminderTime: '07:00',
-      archived: false,
-      order: 0,
-      isPremium: false,
-    },
-    {
-      name: 'Read Books',
-      description: 'Read at least 20 pages every day',
-      color: '#F59E0B',
-      icon: 'book',
-      iconType: 'Ionicons',
-      frequency: FrequencyType.DAILY,
-      targetValue: 20,
-      unit: 'pages',
-      reminderTime: '20:00',
-      archived: false,
-      order: 1,
-      isPremium: false,
-    },
-    {
-      name: 'Exercise',
-      description: 'Stay active and healthy',
-      color: '#EF4444',
-      icon: 'fitness',
-      iconType: 'Ionicons',
-      frequency: FrequencyType.CUSTOM,
-      customFrequency: {
-        type: 'specific_days',
-        days: [1, 3, 5], // Monday, Wednesday, Friday
-      },
-      targetValue: 30,
-      unit: 'minutes',
-      reminderTime: '18:00',
-      archived: false,
-      order: 2,
-      isPremium: false,
-    },
-    {
-      name: 'Drink Water',
-      description: 'Stay hydrated throughout the day',
-      color: '#06B6D4',
-      icon: 'water',
-      iconType: 'Ionicons',
-      frequency: FrequencyType.DAILY,
-      targetValue: 8,
-      unit: 'glasses',
-      archived: false,
-      order: 3,
-      isPremium: false,
-    },
-    {
-      name: 'Learn Spanish',
-      description: 'Practice Spanish for 15 minutes',
-      color: '#8B5CF6',
-      icon: 'language',
-      iconType: 'Ionicons',
-      frequency: FrequencyType.DAILY,
-      targetValue: 15,
-      unit: 'minutes',
-      reminderTime: '19:00',
-      archived: false,
-      order: 4,
-      isPremium: false,
-    },
-  ];
-
   try {
     // Check if habits already exist
     const existingHabits = await habitRepository.getAllHabits();
 
     if (existingHabits.length === 0) {
       console.log('Seeding sample habits...');
+
+      // Get categories
+      const categories = await categoryRepository.getAllCategories();
+      const healthCategory = categories.find(c => c.name === 'Health');
+      const productivityCategory = categories.find(c => c.name === 'Productivity');
+      const learningCategory = categories.find(c => c.name === 'Learning');
+
+      const sampleHabits = [
+        {
+          name: 'Morning Meditation',
+          description: 'Start the day with 10 minutes of mindfulness',
+          color: '#10B981',
+          icon: 'flower',
+          iconType: 'Ionicons',
+          categoryId: healthCategory?.id,
+          frequency: FrequencyType.DAILY,
+          targetValue: 10,
+          unit: 'minutes',
+          reminderTime: '07:00',
+          archived: false,
+          order: 0,
+          isPremium: false,
+        },
+        {
+          name: 'Read Books',
+          description: 'Read at least 20 pages every day',
+          color: '#F59E0B',
+          icon: 'book',
+          iconType: 'Ionicons',
+          categoryId: learningCategory?.id,
+          frequency: FrequencyType.DAILY,
+          targetValue: 20,
+          unit: 'pages',
+          reminderTime: '20:00',
+          archived: false,
+          order: 1,
+          isPremium: false,
+        },
+        {
+          name: 'Exercise',
+          description: 'Stay active and healthy',
+          color: '#EF4444',
+          icon: 'fitness',
+          iconType: 'Ionicons',
+          categoryId: healthCategory?.id,
+          frequency: FrequencyType.CUSTOM,
+          customFrequency: {
+            type: 'specific_days',
+            days: [1, 3, 5], // Monday, Wednesday, Friday
+          },
+          targetValue: 30,
+          unit: 'minutes',
+          reminderTime: '18:00',
+          archived: false,
+          order: 2,
+          isPremium: false,
+        },
+        {
+          name: 'Drink Water',
+          description: 'Stay hydrated throughout the day',
+          color: '#06B6D4',
+          icon: 'water',
+          iconType: 'Ionicons',
+          categoryId: healthCategory?.id,
+          frequency: FrequencyType.DAILY,
+          targetValue: 8,
+          unit: 'glasses',
+          archived: false,
+          order: 3,
+          isPremium: false,
+        },
+        {
+          name: 'Learn Spanish',
+          description: 'Practice Spanish for 15 minutes',
+          color: '#8B5CF6',
+          icon: 'language',
+          iconType: 'Ionicons',
+          categoryId: learningCategory?.id,
+          frequency: FrequencyType.DAILY,
+          targetValue: 15,
+          unit: 'minutes',
+          reminderTime: '19:00',
+          archived: false,
+          order: 4,
+          isPremium: false,
+        },
+      ];
 
       for (const habit of sampleHabits) {
         await habitRepository.createHabit(habit);

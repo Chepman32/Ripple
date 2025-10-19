@@ -5,6 +5,7 @@ import {
   settingsRepository,
 } from '../../database/repositories';
 import { seedSampleHabits } from '../../database/seedData';
+import { assignCategoriesToHabits } from '../../database/migrations/assignCategoriesToHabits';
 
 export const useAppInitialization = () => {
   const [isReady, setIsReady] = useState(false);
@@ -22,8 +23,12 @@ export const useAppInitialization = () => {
       // Initialize default categories
       await categoryRepository.initializeDefaultCategories();
 
-      // Initialize settings
-      await settingsRepository.getSettings();
+      // Run migration to assign categories to existing habits (one-time)
+      const settings = await settingsRepository.getSettings();
+      if (!settings.categoryMigrationDone) {
+        await assignCategoriesToHabits();
+        await settingsRepository.updateSettings({ categoryMigrationDone: true });
+      }
 
       // Seed sample habits for development (only if database is empty)
       if (__DEV__) {

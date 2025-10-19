@@ -50,6 +50,7 @@ export class SettingsRepository {
         premiumUnlocked: false,
         premiumPlusActive: false,
         onboardingCompleted: false,
+        categoryMigrationDone: false,
         createdAt: now,
         updatedAt: now,
       });
@@ -70,6 +71,7 @@ export class SettingsRepository {
       premiumUnlocked: model.premiumUnlocked,
       premiumPlusActive: model.premiumPlusActive,
       onboardingCompleted: model.onboardingCompleted,
+      categoryMigrationDone: model.categoryMigrationDone,
       lastBackupDate: model.lastBackupDate,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,

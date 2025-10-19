@@ -9,7 +9,7 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -36,9 +36,11 @@ export const HabitsListScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   useEffect(() => {
     filterHabits();

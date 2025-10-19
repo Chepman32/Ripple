@@ -67,6 +67,7 @@ export interface AppSettings {
   premiumUnlocked: boolean;
   premiumPlusActive: boolean;
   onboardingCompleted: boolean;
+  categoryMigrationDone: boolean;
   lastBackupDate?: Date;
   createdAt: Date;
   updatedAt: Date;

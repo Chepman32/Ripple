@@ -11,6 +11,7 @@ export class AppSettingsModel extends Realm.Object<AppSettingsModel> {
   premiumUnlocked!: boolean;
   premiumPlusActive!: boolean;
   onboardingCompleted!: boolean;
+  categoryMigrationDone!: boolean;
   lastBackupDate?: Date;
   createdAt!: Date;
   updatedAt!: Date;
@@ -29,6 +30,7 @@ export class AppSettingsModel extends Realm.Object<AppSettingsModel> {
       premiumUnlocked: { type: 'bool', default: false },
       premiumPlusActive: { type: 'bool', default: false },
       onboardingCompleted: { type: 'bool', default: false },
+      categoryMigrationDone: { type: 'bool', default: false },
       lastBackupDate: 'date?',
       createdAt: 'date',
       updatedAt: 'date',
