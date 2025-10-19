@@ -183,7 +183,7 @@ export const TodayScreen: React.FC = () => {
           new Date(),
           'EEEE',
         )}. Keep up the amazing work!`}
-        emoji="🎉"
+        iconName="sparkles"
       />
 
       {/* Complete Habit Modal */}
@@ -193,6 +193,7 @@ export const TodayScreen: React.FC = () => {
           habitName={selectedHabit.name}
           habitColor={selectedHabit.color}
           habitIcon={selectedHabit.icon}
+          habitIconType={selectedHabit.iconType}
           hasTargetValue={!!selectedHabit.targetValue}
           targetValue={selectedHabit.targetValue}
           unit={selectedHabit.unit}

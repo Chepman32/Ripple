@@ -20,7 +20,7 @@ import {
 } from '../../../shared/utils';
 import { LineChart } from '../../statistics/components/LineChart';
 import { CalendarHeatmap } from '../../statistics/components/CalendarHeatmap';
-import { Card, Button } from '../../../shared/components';
+import { Card, Button, HabitIcon } from '../../../shared/components';
 import { format, subDays } from 'date-fns';
 import { EditHabitModal } from '../components/EditHabitModal';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -128,14 +128,21 @@ export const HabitDetailScreen: React.FC = () => {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.backIcon}>←</Text>
+            <FeatherIcon name="chevron-left" size={24} color="#FFFFFF" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
             <FeatherIcon name="edit-2" size={20} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.headerContent}>
-          <Text style={styles.habitIcon}>{habit.icon}</Text>
+          <View style={styles.habitIconWrapper}>
+            <HabitIcon
+              iconName={habit.icon}
+              iconType={habit.iconType}
+              size={36}
+              color="#FFFFFF"
+            />
+          </View>
           <Text style={styles.habitName}>{habit.name}</Text>
           {habit.description && (
             <Text style={styles.habitDescription}>{habit.description}</Text>
@@ -275,10 +282,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     justifyContent: 'center',
-  },
-  backIcon: {
-    fontSize: 32,
-    color: '#FFFFFF',
+    alignItems: 'flex-start',
   },
   editButton: {
     width: 40,
@@ -289,8 +293,13 @@ const styles = StyleSheet.create({
   headerContent: {
     alignItems: 'center',
   },
-  habitIcon: {
-    fontSize: 60,
+  habitIconWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.md,
   },
   habitName: {

@@ -23,6 +23,8 @@ import { useHaptic } from '../../../shared/hooks/useHaptic';
 import { spacing, typography } from '../../../shared/constants';
 import { habitRepository, categoryRepository } from '../../../database/repositories';
 import { Habit, Category } from '../../../shared/types';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import { HabitIcon } from '../../../shared/components';
 
 export const HabitsListScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -131,9 +133,7 @@ export const HabitsListScreen: React.FC = () => {
             },
           ]}
         >
-          <Text style={[styles.searchIcon, { color: colors.textSecondary }]}>
-            🔍
-          </Text>
+          <FeatherIcon name="search" size={18} color={colors.textSecondary} style={styles.searchIcon} />
           <TextInput
             style={[styles.searchInput, { color: colors.textPrimary }]}
             placeholder="Search habits..."
@@ -146,9 +146,7 @@ export const HabitsListScreen: React.FC = () => {
               onPress={() => setSearchQuery('')}
               style={styles.clearButton}
             >
-              <Text style={[styles.clearText, { color: colors.textSecondary }]}>
-                ✕
-              </Text>
+              <FeatherIcon name="x" size={18} color={colors.textSecondary} />
             </TouchableOpacity>
           )}
         </View>
@@ -173,6 +171,7 @@ export const HabitsListScreen: React.FC = () => {
               label={category.name}
               color={category.color}
               icon={category.icon}
+              iconType={category.iconType}
               selected={selectedCategory === category.id}
               onPress={() => handleCategorySelect(category.id)}
             />
@@ -210,6 +209,7 @@ interface CategoryChipProps {
   label: string;
   color?: string;
   icon?: string;
+  iconType?: string;
   selected: boolean;
   onPress: () => void;
 }
@@ -218,6 +218,7 @@ const CategoryChip: React.FC<CategoryChipProps> = ({
   label,
   color,
   icon,
+  iconType,
   selected,
   onPress,
 }) => {
@@ -247,7 +248,16 @@ const CategoryChip: React.FC<CategoryChipProps> = ({
           animatedStyle,
         ]}
       >
-        {icon && <Text style={styles.chipIcon}>{icon}</Text>}
+        {icon && (
+          <View style={styles.chipIconWrapper}>
+            <HabitIcon
+              iconName={icon}
+              iconType={iconType}
+              size={16}
+              color={selected ? '#FFFFFF' : colors.textPrimary}
+            />
+          </View>
+        )}
         <Text
           style={[
             styles.chipLabel,
@@ -356,7 +366,12 @@ const HabitListItem: React.FC<HabitListItemProps> = ({
                 { backgroundColor: habit.color + '26' },
               ]}
             >
-              <Text style={styles.habitIconText}>{habit.icon}</Text>
+              <HabitIcon
+                iconName={habit.icon}
+                iconType={habit.iconType}
+                size={20}
+                color={habit.color}
+              />
             </View>
             <View style={styles.habitInfo}>
               <Text style={[styles.habitName, { color: colors.textPrimary }]}>
@@ -366,12 +381,10 @@ const HabitListItem: React.FC<HabitListItemProps> = ({
                 style={[styles.habitFrequency, { color: colors.textSecondary }]}
               >
                 {habit.frequency}
-                {habit.targetValue && ` • ${habit.targetValue} ${habit.unit}`}
+                {habit.targetValue && ` - ${habit.targetValue} ${habit.unit}`}
               </Text>
             </View>
-            <Text style={[styles.chevron, { color: colors.textTertiary }]}>
-              ›
-            </Text>
+            <FeatherIcon name="chevron-right" size={20} color={colors.textTertiary} />
           </TouchableOpacity>
         </Animated.View>
       </GestureDetector>
@@ -408,7 +421,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   searchIcon: {
-    fontSize: 18,
     marginRight: spacing.sm,
   },
   searchInput: {
@@ -419,16 +431,12 @@ const styles = StyleSheet.create({
   clearButton: {
     padding: spacing.xs,
   },
-  clearText: {
-    fontSize: 18,
-  },
   categoryScroll: {
     maxHeight: 50,
     marginBottom: spacing.md,
   },
   categoryScrollContent: {
     paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
   },
   categoryChip: {
     flexDirection: 'row',
@@ -437,10 +445,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: 18,
     borderWidth: 2,
-    gap: spacing.xs,
+    marginRight: spacing.sm,
   },
-  chipIcon: {
-    fontSize: 16,
+  chipIconWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.xs,
   },
   chipLabel: {
     ...typography.body,
@@ -487,9 +497,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: spacing.lg,
   },
-  habitIconText: {
-    fontSize: 20,
-  },
   habitInfo: {
     flex: 1,
   },
@@ -500,10 +507,6 @@ const styles = StyleSheet.create({
   },
   habitFrequency: {
     ...typography.caption,
-  },
-  chevron: {
-    fontSize: 32,
-    fontWeight: '300',
   },
   emptyState: {
     alignItems: 'center',

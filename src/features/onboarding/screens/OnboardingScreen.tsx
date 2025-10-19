@@ -17,7 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
-import { Button } from '../../../shared/components';
+import { Button, HabitIcon } from '../../../shared/components';
 import { spacing, typography } from '../../../shared/constants';
 import { settingsRepository } from '../../../database/repositories';
 
@@ -31,7 +31,8 @@ interface OnboardingSlide {
   id: string;
   title: string;
   description: string;
-  emoji: string;
+  iconName: string;
+  iconType?: 'Ionicons' | 'Feather' | 'MaterialCommunityIcons';
 }
 
 const slides: OnboardingSlide[] = [
@@ -40,28 +41,32 @@ const slides: OnboardingSlide[] = [
     title: 'Welcome to Ripple',
     description:
       'Build better habits, one ripple at a time. Track your progress and watch your life transform.',
-    emoji: '🌊',
+    iconName: 'water',
+    iconType: 'Ionicons',
   },
   {
     id: '2',
     title: 'Every Habit Creates Ripples',
     description:
       'Small, consistent actions compound into meaningful change. Your habits shape your future.',
-    emoji: '✨',
+    iconName: 'sparkles',
+    iconType: 'Ionicons',
   },
   {
     id: '3',
     title: 'Swipe to Complete',
     description:
       'Simply swipe right on any habit to mark it complete. Quick, easy, and satisfying.',
-    emoji: '👆',
+    iconName: 'hand-right',
+    iconType: 'Ionicons',
   },
   {
     id: '4',
     title: 'Track Your Progress',
     description:
       'View detailed statistics, streaks, and insights about your habits. Stay motivated!',
-    emoji: '📊',
+    iconName: 'stats-chart',
+    iconType: 'Ionicons',
   },
 ];
 
@@ -209,7 +214,19 @@ const OnboardingSlide: React.FC<OnboardingSlideProps> = ({
   return (
     <View style={[styles.slide, { width: SCREEN_WIDTH }]}>
       <Animated.View style={[styles.content, animatedStyle]}>
-        <Text style={styles.emoji}>{slide.emoji}</Text>
+        <View
+          style={[
+            styles.iconWrapper,
+            { backgroundColor: colors.primary + '1A' },
+          ]}
+        >
+          <HabitIcon
+            iconName={slide.iconName}
+            iconType={slide.iconType}
+            size={64}
+            color={colors.primary}
+          />
+        </View>
         <Text style={[styles.title, { color: colors.textPrimary }]}>
           {slide.title}
         </Text>
@@ -292,8 +309,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing['4xl'],
   },
-  emoji: {
-    fontSize: 120,
+  iconWrapper: {
+    width: 120,
+    height: 120,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing['3xl'],
   },
   title: {
@@ -310,12 +331,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: spacing.sm,
     marginBottom: spacing['3xl'],
   },
   dot: {
     height: 8,
     borderRadius: 4,
+    marginHorizontal: spacing.xs,
   },
   footer: {
     paddingHorizontal: spacing.xl,

@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
 import { spacing, typography } from '../../../shared/constants';
-import { Card } from '../../../shared/components';
+import { Card, HabitIcon } from '../../../shared/components';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { habitRepository, settingsRepository } from '../../../database/repositories';
 import {
   calculateStreak,
@@ -173,7 +174,14 @@ export const StatisticsScreen: React.FC = () => {
                 >
                   {range.charAt(0).toUpperCase() + range.slice(1)}
                 </Text>
-                {isLocked && <Text style={styles.lockIcon}>🔒</Text>}
+                {isLocked && (
+                  <FeatherIcon
+                    name="lock"
+                    size={12}
+                    color={colors.textSecondary}
+                    style={styles.lockIcon}
+                  />
+                )}
               </TouchableOpacity>
             );
           })}
@@ -267,14 +275,19 @@ export const StatisticsScreen: React.FC = () => {
               ]}
             >
               <View style={[styles.habitIconSmall, { backgroundColor: habit.color + '26' }]}>
-                <Text style={styles.habitIconText}>{habit.icon}</Text>
+                <HabitIcon
+                  iconName={habit.icon}
+                  iconType={habit.iconType}
+                  size={18}
+                  color={habit.color}
+                />
               </View>
               <View style={styles.performanceInfo}>
                 <Text style={[styles.habitNameText, { color: colors.textPrimary }]}>
                   {habit.name}
                 </Text>
                 <Text style={[styles.performanceStats, { color: colors.textSecondary }]}>
-                  {successRate}% • {streak} day streak
+                  {successRate}% - {streak} day streak
                 </Text>
               </View>
               <View style={styles.miniHeatmap}>
@@ -291,9 +304,12 @@ export const StatisticsScreen: React.FC = () => {
         {isPremium && (
           <>
             <Card style={[styles.card, styles.insightsCard]}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-                ✨ Insights
-              </Text>
+              <View style={styles.sectionTitleRow}>
+                <View style={styles.sectionIcon}>
+                  <HabitIcon iconName="sparkles" size={20} color={colors.primary} />
+                </View>
+                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Insights</Text>
+              </View>
               <Text style={[styles.insightsSubtitle, { color: colors.textSecondary }]}>
                 Best Time of Day
               </Text>
@@ -318,7 +334,10 @@ export const StatisticsScreen: React.FC = () => {
 
         {!isPremium && (
           <Card style={[styles.card, styles.premiumCard]}>
-            <Text style={styles.premiumBadge}>⭐ PREMIUM</Text>
+            <View style={[styles.premiumBadge, { borderColor: colors.primary }]}> 
+              <HabitIcon iconName="ribbon" size={16} color={colors.primary} />
+              <Text style={[styles.premiumBadgeText, { color: colors.primary }]}>Premium</Text>
+            </View>
             <Text style={[styles.premiumTitle, { color: colors.textPrimary }]}>
               Unlock Advanced Insights
             </Text>
@@ -377,8 +396,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   lockIcon: {
-    fontSize: 10,
-    marginTop: 2,
+    marginTop: spacing.xs,
   },
   content: {
     padding: spacing.xl,
@@ -408,6 +426,14 @@ const styles = StyleSheet.create({
     ...typography.h3,
     marginBottom: spacing.lg,
   },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  sectionIcon: {
+    marginRight: spacing.sm,
+  },
   performanceItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -421,9 +447,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
-  },
-  habitIconText: {
-    fontSize: 20,
   },
   performanceInfo: {
     flex: 1,
@@ -460,10 +483,19 @@ const styles = StyleSheet.create({
     padding: spacing['2xl'],
   },
   premiumBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  premiumBadgeText: {
     ...typography.caption,
     fontWeight: '700',
-    color: '#F59E0B',
-    marginBottom: spacing.sm,
+    textTransform: 'uppercase',
+    marginLeft: spacing.xs,
   },
   premiumTitle: {
     ...typography.h3,

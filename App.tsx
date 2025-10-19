@@ -18,6 +18,9 @@ import { useAppInitialization } from './src/shared/hooks/useAppInitialization';
 import { SplashScreen } from './src/features/onboarding/screens/SplashScreen';
 import { OnboardingScreen } from './src/features/onboarding/screens/OnboardingScreen';
 import { settingsRepository } from './src/database/repositories';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -25,6 +28,25 @@ function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      try {
+        await Promise.all([
+          Ionicons.loadFont(),
+          FeatherIcon.loadFont(),
+          MaterialCommunityIcon.loadFont(),
+        ]);
+      } catch (fontError) {
+        console.error('Failed to load icon fonts', fontError);
+      } finally {
+        setFontsLoaded(true);
+      }
+    };
+
+    loadFonts();
+  }, []);
 
   useEffect(() => {
     if (isReady) {
@@ -58,7 +80,7 @@ function App() {
     );
   }
 
-  if (!isReady || showSplash) {
+  if (!fontsLoaded || !isReady || showSplash) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>

@@ -16,6 +16,7 @@ import Animated, {
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
 import { Button } from '../../../shared/components';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { spacing, typography } from '../../../shared/constants';
 import { habitRepository } from '../../../database/repositories';
 import { exportToJSON, exportToCSV } from '../../../shared/utils/dataExport';
@@ -151,7 +152,23 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
                     setSelectedFormat('json');
                   }}
                 >
-                  <Text style={styles.optionIcon}>📄</Text>
+                  <View
+                    style={[
+                      styles.optionIcon,
+                      {
+                        backgroundColor:
+                          selectedFormat === 'json'
+                            ? '#FFFFFF33'
+                            : colors.background,
+                      },
+                    ]}
+                  >
+                    <FeatherIcon
+                      name="file-text"
+                      size={20}
+                      color={selectedFormat === 'json' ? '#FFFFFF' : colors.textSecondary}
+                    />
+                  </View>
                   <Text
                     style={[
                       styles.optionText,
@@ -193,7 +210,23 @@ export const ExportDataModal: React.FC<ExportDataModalProps> = ({
                     setSelectedFormat('csv');
                   }}
                 >
-                  <Text style={styles.optionIcon}>📊</Text>
+                  <View
+                    style={[
+                      styles.optionIcon,
+                      {
+                        backgroundColor:
+                          selectedFormat === 'csv'
+                            ? '#FFFFFF33'
+                            : colors.background,
+                      },
+                    ]}
+                  >
+                    <FeatherIcon
+                      name="bar-chart-2"
+                      size={20}
+                      color={selectedFormat === 'csv' ? '#FFFFFF' : colors.textSecondary}
+                    />
+                  </View>
                   <Text
                     style={[
                       styles.optionText,
@@ -365,7 +398,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   optionIcon: {
-    fontSize: 32,
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.sm,
   },
   optionText: {

@@ -19,6 +19,7 @@ import Animated, {
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { useHaptic } from '../../../shared/hooks/useHaptic';
 import { Button, HabitIcon } from '../../../shared/components';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { spacing, typography, HABIT_ICONS } from '../../../shared/constants';
 import { FrequencyType, Habit } from '../../../shared/types';
 
@@ -283,7 +284,7 @@ export const EditHabitModal: React.FC<EditHabitModalProps> = ({
                     }}
                   >
                     {selectedColor === color && (
-                      <Text style={styles.checkmark}>✓</Text>
+                      <FeatherIcon name="check" size={16} color="#FFFFFF" />
                     )}
                   </TouchableOpacity>
                 ))}
@@ -527,11 +528,6 @@ const styles = StyleSheet.create({
   colorButtonSelected: {
     borderWidth: 3,
     borderColor: '#FFFFFF',
-  },
-  checkmark: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: 'bold',
   },
   frequencyButtons: {
     flexDirection: 'row',

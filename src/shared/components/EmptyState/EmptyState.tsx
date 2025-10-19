@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { Button } from '../Button';
+import { HabitIcon } from '../HabitIcon';
 import { spacing, typography } from '../../constants';
 
 interface EmptyStateProps {
-  emoji?: string;
+  iconName?: string;
+  iconType?: 'Ionicons' | 'Feather' | 'MaterialCommunityIcons';
   title: string;
   description: string;
   actionLabel?: string;
@@ -13,7 +15,8 @@ interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
-  emoji,
+  iconName,
+  iconType,
   title,
   description,
   actionLabel,
@@ -23,7 +26,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
   return (
     <View style={styles.container}>
-      {emoji && <Text style={styles.emoji}>{emoji}</Text>}
+      {iconName && (
+        <View
+          style={[styles.iconWrapper, { backgroundColor: colors.primary + '1A' }]}
+        >
+          <HabitIcon
+            iconName={iconName}
+            iconType={iconType}
+            size={64}
+            color={colors.primary}
+          />
+        </View>
+      )}
       <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
       <Text style={[styles.description, { color: colors.textSecondary }]}>
         {description}
@@ -45,8 +59,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing['4xl'],
     paddingVertical: spacing['6xl'],
   },
-  emoji: {
-    fontSize: 80,
+  iconWrapper: {
+    width: 100,
+    height: 100,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.xl,
   },
   title: {

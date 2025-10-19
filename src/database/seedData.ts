@@ -93,15 +93,15 @@ export const seedSampleHabits = async () => {
       }
 
       console.log(
-        `✅ Successfully seeded ${sampleHabits.length} sample habits`,
+        `Successfully seeded ${sampleHabits.length} sample habits`,
       );
     } else {
       console.log(
-        `ℹ️ Database already has ${existingHabits.length} habits, skipping seed`,
+        `Database already has ${existingHabits.length} habits, skipping seed`,
       );
     }
   } catch (error) {
-    console.error('❌ Failed to seed sample habits:', error);
+    console.error('Failed to seed sample habits:', error);
     throw error;
   }
 };
@@ -117,9 +117,9 @@ export const clearAllHabits = async () => {
       await habitRepository.deleteHabit(habit.id);
     }
 
-    console.log(`✅ Cleared ${habits.length} habits from database`);
+    console.log(`Cleared ${habits.length} habits from database`);
   } catch (error) {
-    console.error('❌ Failed to clear habits:', error);
+    console.error('Failed to clear habits:', error);
     throw error;
   }
 };

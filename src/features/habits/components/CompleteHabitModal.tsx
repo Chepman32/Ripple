@@ -23,6 +23,7 @@ interface CompleteHabitModalProps {
   habitName: string;
   habitColor: string;
   habitIcon: string;
+  habitIconType?: string;
   hasTargetValue?: boolean;
   targetValue?: number;
   unit?: string;
@@ -53,6 +54,7 @@ export const CompleteHabitModal: React.FC<CompleteHabitModalProps> = ({
   habitName,
   habitColor,
   habitIcon,
+  habitIconType,
   hasTargetValue,
   targetValue,
   unit,
@@ -142,7 +144,12 @@ export const CompleteHabitModal: React.FC<CompleteHabitModalProps> = ({
                   { backgroundColor: habitColor + '26' },
                 ]}
               >
-                <Text style={styles.habitIconText}>{habitIcon}</Text>
+                <HabitIcon
+                  iconName={habitIcon}
+                  iconType={habitIconType}
+                  size={32}
+                  color={habitColor}
+                />
               </View>
               <Text style={[styles.habitName, { color: colors.textPrimary }]}>
                 {habitName}
@@ -357,9 +364,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
-  },
-  habitIconText: {
-    fontSize: 32,
   },
   habitName: {
     ...typography.h3,

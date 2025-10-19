@@ -15,6 +15,7 @@ import { useHaptic } from '../../../shared/hooks/useHaptic';
 import { spacing, typography, shadows } from '../../../shared/constants';
 import { Habit } from '../../../shared/types';
 import { ConfettiAnimation, HabitIcon } from '../../../shared/components';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.4;
@@ -153,7 +154,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
           {/* Swipe Overlay */}
           <Animated.View style={[styles.overlay, overlayStyle]}>
             <Animated.View style={[styles.checkmarkContainer, checkmarkStyle]}>
-              <Text style={styles.checkmark}>✓</Text>
+              <FeatherIcon name="check" size={28} color="#FFFFFF" />
             </Animated.View>
           </Animated.View>
 
@@ -220,7 +221,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
                 { backgroundColor: colors.success },
               ]}
             >
-              <Text style={styles.completedBadgeText}>✓</Text>
+              <FeatherIcon name="check" size={16} color="#FFFFFF" />
             </View>
           )}
         </Animated.View>
@@ -254,11 +255,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#10B981',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  checkmark: {
-    fontSize: 32,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
   },
   iconContainer: {
     width: 50,
@@ -308,10 +304,5 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  completedBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });

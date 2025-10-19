@@ -5,18 +5,18 @@ export interface HabitIconConfig {
 }
 
 export const HABIT_ICONS: HabitIconConfig[] = [
-  { name: 'fitness', type: 'Ionicons', label: 'Exercise' },
+  { name: 'barbell', type: 'Ionicons', label: 'Exercise' },
   { name: 'book', type: 'Ionicons', label: 'Reading' },
-  { name: 'run', type: 'Ionicons', label: 'Running' },
+  { name: 'walk', type: 'Ionicons', label: 'Running' },
   { name: 'body', type: 'Ionicons', label: 'Yoga' },
   { name: 'water', type: 'Ionicons', label: 'Hydration' },
-  { name: 'target', type: 'Feather', label: 'Goal' },
-  { name: 'edit', type: 'Feather', label: 'Writing' },
+  { name: 'target', type: 'Feather', label: 'Goals' },
+  { name: 'edit-3', type: 'Feather', label: 'Writing' },
   { name: 'color-palette', type: 'Ionicons', label: 'Art' },
-  { name: 'music', type: 'Feather', label: 'Music' },
-  { name: 'nutrition', type: 'Ionicons', label: 'Nutrition' },
+  { name: 'musical-notes', type: 'Ionicons', label: 'Music' },
+  { name: 'fast-food', type: 'Ionicons', label: 'Nutrition' },
   { name: 'moon', type: 'Ionicons', label: 'Sleep' },
-  { name: 'brain', type: 'Ionicons', label: 'Learning' },
+  { name: 'school', type: 'Ionicons', label: 'Learning' },
   { name: 'briefcase', type: 'Feather', label: 'Work' },
   { name: 'home', type: 'Ionicons', label: 'Home' },
   { name: 'leaf', type: 'Ionicons', label: 'Nature' },
@@ -24,7 +24,7 @@ export const HABIT_ICONS: HabitIconConfig[] = [
   { name: 'heart', type: 'Ionicons', label: 'Health' },
   { name: 'trending-up', type: 'Feather', label: 'Growth' },
   { name: 'clock', type: 'Feather', label: 'Time' },
-  { name: 'coffee', type: 'Ionicons', label: 'Coffee' },
+  { name: 'cafe', type: 'Ionicons', label: 'Coffee' },
 ];
 
 export const getDefaultIcon = (): HabitIconConfig => HABIT_ICONS[0];

@@ -18,6 +18,7 @@ import {
 } from '../../../database/repositories';
 import { AppSettings } from '../../../shared/types';
 import { ExportDataModal } from '../components/ExportDataModal';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 export const SettingsScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -124,7 +125,7 @@ export const SettingsScreen: React.FC = () => {
         </Text>
       )}
       {showChevron && onPress && (
-        <Text style={[styles.chevron, { color: colors.textTertiary }]}>›</Text>
+        <FeatherIcon name="chevron-right" size={20} color={colors.textTertiary} />
       )}
     </TouchableOpacity>
   );
@@ -292,12 +293,19 @@ export const SettingsScreen: React.FC = () => {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={[styles.footerText, { color: colors.textTertiary }]}>
-            Made with ❤️ for better habits
-          </Text>
-          <Text style={[styles.footerText, { color: colors.textTertiary }]}>
-            © 2025 Ripple
-          </Text>
+          <View style={styles.footerRow}>
+            <FeatherIcon name="heart" size={16} color={colors.primary} />
+            <Text
+              style={[
+                styles.footerText,
+                styles.footerRowText,
+                { color: colors.textTertiary },
+              ]}
+            >
+              Made with care for better habits
+            </Text>
+          </View>
+          <Text style={[styles.footerText, { color: colors.textTertiary }]}>Copyright 2025 Ripple</Text>
         </View>
       </ScrollView>
 
@@ -368,16 +376,19 @@ const styles = StyleSheet.create({
     ...typography.body,
     marginRight: spacing.sm,
   },
-  chevron: {
-    fontSize: 24,
-    fontWeight: '300',
-  },
   footer: {
     alignItems: 'center',
     paddingVertical: spacing['4xl'],
-    gap: spacing.sm,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.xs,
   },
   footerText: {
     ...typography.caption,
+  },
+  footerRowText: {
+    marginLeft: spacing.xs,
   },
 });
